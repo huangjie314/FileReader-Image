@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <style type="text/css">
+        #uploadFile{display: none;}
+        .preview{
+            border:1px solid #ccc;
+            min-height: 500px;
+            width: 500px;
+            padding:10px;
+        }
+    </style>
+</head>
+<body>
+    <form id="form">
+        <div>
+            <label for="uploadFile">上传图片</label>
+            <input type="file" name="files" id="uploadFile">
+            <button type="button" id="btn">上传图片</button>
+        </div>
+        <div>
+            <h4>预览区</h4>
+            <div class="preview"></div>
+        </div>
+    </form>
+
+</body>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        var $btn = $("#btn");//按钮
+        var $uploadFile = $("#uploadFile");
+        var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
+
+        $btn.on('click', function(){
+            $uploadFile.trigger('click');
+        });
+        $uploadFile.on('change propertychange', function(){
+            if(!/(.JPEG|.jpeg|.jpg|.JPG|.gif|.GIF|.png|.PNG)$/.test(this.value.toString())){
+                this.value = "";
+                alert("文件格式不正确！");
+                return false;
+            }
+
+
+            //非IE
+            if(this.files && this.files.length > 0 && window.FileReader){
+                var file = this.files[0];
+                //文件大小
+                var fileSize = file.size;
+                if(fileSize/1024/1024 > 5){
+                    this.value = "";
+                    alert("上传图片的大小不能超过5M");
+                    return false;
+                }
+                var reader = new FileReader();
+                reader.onload = function(e){
+                    newImage(reader.result); //reader==e.target
+                };
+                reader.readAsDataURL(file);
+            } else { // IE if(isIE && !this.files) 判断是否IE if(document.all) IE为true,其他浏览器为false
+                $(this).blur();
+                try{
+                    var filePath = this.value;
+                    var fileSystem = new ActiveXObject("Scripting.FileSystemObject");
+                    var file = fileSystem.GetFile(filePath);
+                    var fileSize = file.size;
+                    //文件大小
+                    if(fileSize/1024/1024 > 5){
+                        this.value = "";
+                        alert("上传图片的大小不能超过5M");
+                        return false;
+                    }
+                } catch(e){
+                    alert("error");
+                    return
+                }
+                newImage(file.Path);
+            }
+        });
+
+        //创建一个image
+        function newImage(src){
+            var image = new Image();
+            image.onload = function(){
+                $('.preview').append(image);
+            }
+            image.src = src;
+            image.style.cssText = "max-width:100%;height:200px;margin:5px; vertical-align:top;";
+
+        }
+    });
+</script>
+</html>
