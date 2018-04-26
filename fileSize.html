@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+    <title></title>
+    <!-- <script type="text/javascript" src="../core/jquery-3.1.1.min.js"></script> -->
+</head>
+<body>
+<script type="text/javascript">
+
+    //判断图片尺寸大小
+    function getPhotoSize(obj){
+        var ImgObj=new Image(); //建立一个图像对象
+        var photoExt = obj.value.substr(obj.value.lastIndexOf('.')).toLowerCase();//获得文件的后缀名
+        if(photoExt != '.jpg' && photoExt != '.png'){
+            alert('请上传图片文件');
+            return false;
+        }
+        var fileSize = 0;
+        var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
+        if(isIE && !obj.files){
+            var filePath = obj.value;
+            var fileSystem = new ActiveXObject("Scripting.FileSystemObject");
+            var file = fileSystem.GetFile(filePath);
+            fileSize = file.Size;
+        }else{
+            console.log('files===>'+obj.files[0]);
+            fileSize = obj.files[0].size;
+        }
+        fileSize = Math.round(fileSize/1024*100)/100; //单位为kb
+        if(fileSize>=10){
+            alert('照片最大尺寸不能为10KB,请重新上传!');
+            return false;
+        }
+
+    }
+</script>
+<input type="file" id="imgFile" name="uploadImg" style="width: 150px;" onchange="getPhotoSize(this)" />
+</body>
+</html>
