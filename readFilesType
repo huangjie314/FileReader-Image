@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>readFilesType</title>
+</head>
+<body>
+<input type="file" value="" onchange="readFiles(this.files)" />
+</body>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+    function readFiles(files){
+        if(files.length > 0){
+            var file = files[0];
+            var reader = new FileReader();
+            if(/text+/.test(file.type)){
+                reader.onload = function(){
+                    $(document.body).append('<pre>'+ this.result +'</pre>')
+                }
+                reader.readAsText(file);
+            } else if(/image+/.test(file.type)){
+                reader.onload = function(){
+                    $(document.body).append('<img src="'+this.result+'"/>');
+                }
+                reader.readAsDataURL(file)
+            }
+        }
+    }
+</script>
+</html>
